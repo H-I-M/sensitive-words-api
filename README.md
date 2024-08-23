@@ -25,4 +25,15 @@ Before you begin, ensure you have met the following requirements:
 - Gradle installed or use the provided `gradlew` script.
 - MySQL database setup.
 
+## API Endpoints
+**GET /sensitive-words:** Retrieve a list of all sensitive words.
+**POST /sanitize:** Sanitize a given text by replacing sensitive words.
+**PUT /sensitive-words:** Add or update a sensitive word.
+
+
+## Troubleshooting
+Database Connection Issues: Ensure that your MySQL server is running and that the credentials in the application.properties file are correct.
+
+The project uses Flyway for database migrations. The initial migration script is located in src/main/resources/db/migration/. Ensure your MySQL database is running and execute the application to apply the migrations.
+
 
