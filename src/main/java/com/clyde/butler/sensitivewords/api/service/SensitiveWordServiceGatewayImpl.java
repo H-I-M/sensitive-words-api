@@ -8,12 +8,14 @@ import com.clyde.butler.sensitivewords.api.mapper.SensitiveWordMapper;
 import com.clyde.butler.sensitivewords.api.model.SensitiveWordDTO;
 import com.clyde.butler.sensitivewords.api.repository.SensitiveWordRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SensitiveWordServiceGatewayImpl implements SensitiveWordServiceGateway {
@@ -25,6 +27,8 @@ public class SensitiveWordServiceGatewayImpl implements SensitiveWordServiceGate
         if (dirtyWord.isEmpty() || dirtyWord.isBlank()) {
             throw new InvalidWordException();
         }
+
+        log.debug("Sanitizing word: " + dirtyWord);
 
         List<SensitiveWord> words = repository.findAll();
         for (SensitiveWord word : words) {
@@ -48,6 +52,8 @@ public class SensitiveWordServiceGatewayImpl implements SensitiveWordServiceGate
 
         }
 
+        log.debug("Adding word: " + word);
+
         return mapper.toDTO(repository.save(
                 mapper.toEntity(SensitiveWordDTO.builder().word(word).build())));
     }
@@ -58,6 +64,8 @@ public class SensitiveWordServiceGatewayImpl implements SensitiveWordServiceGate
                 .orElseThrow(WordNotFoundException::new);
         existingWord.setWord(word.getWord());
 
+        log.debug("Word updated to: " + word.getWord());
+
         return mapper.toDTO(repository.save(existingWord));
     }
 
@@ -65,6 +73,7 @@ public class SensitiveWordServiceGatewayImpl implements SensitiveWordServiceGate
     public void deleteWord(Long id) {
         try {
             repository.deleteById(id);
+            log.debug("Deleted word with ID: " + id);
         } catch (Exception e) {
             throw new WordNotFoundException();
         }
